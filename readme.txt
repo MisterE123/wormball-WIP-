@@ -1,4 +1,4 @@
-Sumo mod by MisterE for use with arena_lib (minigame_lib) You should be familiar with how to set up arena_lib arenas.
+Wormball mod by MisterE for use with arena_lib (minigame_lib) You should be familiar with how to set up arena_lib arenas.
 
 Code snippets from https://gitlab.com/zughy-friends-minetest/arena_lib/-/blob/master/DOCS.md and from Zughy's minigames
 

@@ -404,9 +404,10 @@ minetest.register_globalstep(function(dtime)
                             minetest.chat_send_player(pl_name,'your score is '..arena.players[pl_name].score)
                             --disengage before removing player
                             if player then
-                                player:set_properties({textures = wormball.player_texture_save[p_name]})
+                                player:set_properties({textures = wormball.player_texture_save[pl_name]})
                                 local att = player:get_attach()
                                 player:set_detach()
+                                player_api.player_attached[pl_name] = false
                                 if att then att:remove() end
                                 minetest.sound_play(sound, {
                                     to_player = p_name,
@@ -420,7 +421,7 @@ minetest.register_globalstep(function(dtime)
                             
                             end,pl_name)
                             
-                            return
+                            --return
                         end
 
                     end
@@ -443,9 +444,23 @@ minetest.register_globalstep(function(dtime)
                 if #arena.players[pl_name].nodes == 0 then
                     minetest.chat_send_player(pl_name, 'Your score is '..arena.players[pl_name].score)
                     arena.players[pl_name].alive = false
-                    minetest.after(1,function(pl_name)  
+                    local player = minetest.get_player_by_name(pl_name)
+                    if player then
+                        player:set_properties({textures = wormball.player_texture_save[pl_name]})
+                        local att = player:get_attach()
+                        player:set_detach()
+                        player_api.player_attached[pl_name] = false
+                        if att then att:remove() end
+                        minetest.sound_play(sound, {
+                            to_player = p_name,
+                            gain = 2.0,
+                        })        
+                    end
+                    arena.players[pl_name].alive = false
+                    minetest.after(1, function(pl_name) 
+                        
                         arena_lib.remove_player_from_arena(pl_name, 1)
-
+                    
                     end,pl_name)
                 end
             end
@@ -485,28 +500,28 @@ arena_lib.on_eliminate('wormball', function(arena, p_name)
     end
     if arena.mode == 'multiplayer' and count == 1 then
         if win_player then
-            local win_player_obj = minetest.get_player_by_name(win_player)
-
+            win_player_obj = minetest.get_player_by_name(win_player)
+            win_player_obj:set_properties({textures = wormball.player_texture_save[win_player]})
             minetest.after(1,function(arena,win_player)
                 arena_lib.load_celebration('wormball', arena, win_player)
             end,arena,win_player)
             local att = win_player_obj:get_attach()
-            --win_player_obj:set_detach()
-
+            win_player_obj:set_detach()
+            player_api.player_attached[win_player] = false
             if att then att:remove() end
         end
     end
 
 
     local player = minetest.get_player_by_name(p_name) or nil
-    if player then
-        --minetest.chat_send_all('player_textures is: '..dump(arena.players[p_name].textures))
-        player:set_properties({textures = wormball.player_texture_save[p_name]})
-        local att = player:get_attach()
-        player:set_detach()
+    -- if player then
+    --     --minetest.chat_send_all('player_textures is: '..dump(arena.players[p_name].textures))
+    --     player:set_properties({textures = wormball.player_texture_save[p_name]})
+    --     local att = player:get_attach()
+    --     player:set_detach()
 
-        if att then att:remove() end
-    end
+    --     if att then att:remove() end
+    -- end
 
     for p_name, stats in pairs(arena.players) do
         
@@ -525,29 +540,9 @@ arena_lib.on_disconnect('wormball', function(arena, p_name)
     if player then
         player:set_properties({textures = wormball.player_texture_save[p_name]})
         local att = player:get_attach()
+        player_api.player_attached[p_name] = false
         player:set_detach()
         if att then att:remove() end
     end
-
-end)
-
-arena_lib.on_end('wormball', function(arena, players, winner_name)
-    for p_name, stats in pairs(players) do
-        
-        local player = minetest.get_player_by_name(p_name)
-        if player then
-            player:set_properties({textures = wormball.player_texture_save[p_name]})
-            local att = player:get_attach()
-            player:set_detach()
-            if att then att:remove() end
-            minetest.sound_play(sound, {
-                to_player = p_name,
-                gain = 2.0,
-            })        
-        end
-    end
-
-
-
 
 end)

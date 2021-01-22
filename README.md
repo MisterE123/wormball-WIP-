@@ -1,11 +1,7 @@
-# sumo
+# Wormball
 
-Knock other players off the platform to win
+Eat apples to grow, be the last and the longest!
 
 ![](screenshot.png)
 
-Contributors: Zughy, MisterE
-
-Schematics for arenas can be found here:
-
-https://notabug.org/MisterE123/sumo_arenas
+Contributors: MisterE

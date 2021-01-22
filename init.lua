@@ -1,14 +1,17 @@
 wormball = {}
-wormball.colors = {yellow = "fcba03", 
-                  orangered = "fc2803", 
-                  darkred = "a10000", 
-                  lightgreen = "80ff00", 
-                  aqua = "00ff84",
-                  lightblue = "0084ff",
-                  darkblue = "0d00ff",
-                  purple = "8000ff",
-                  lightpurple = "ee00ff",
-                  pink = "ff006f"}
+--lookup tables
+wormball.colors = {yellow = "fcba0388", 
+                  orangered = "fc280388", 
+                  darkred = "a1000088", 
+                  lightgreen = "80ff0088", 
+                  aqua = "00ff8488",
+                  lightblue = "0084ff88",
+                  darkblue = "0d00ff88",
+                  purple = "8000ff88",
+                  lightpurple = "ee00ff88",
+                  pink = "ff006f88"}
+
+
 
 
   arena_lib.register_minigame("wormball", {
@@ -22,10 +25,10 @@ wormball.colors = {yellow = "fcba03",
       join_while_in_progress = false,
       keep_inventory = false,
       in_game_physics = {
-        speed = 0,
-        jump = 0,
+        speed = 2,
+        jump = 3,
         sneak = false,
-        gravity = 0,
+        gravity = 1,
     	},
       show_nametags = true,
       hotbar = {
@@ -38,13 +41,19 @@ wormball.colors = {yellow = "fcba03",
         area_to_clear_after_game_pos_1 = {x = 0, y = 0, z = 0},
         area_to_clear_after_game_pos_2 = {x = 0, y = 0, z = 0},
       },
+      temp_properties = {
+        mode = 'singleplayer',
+      },
+
       player_properties = {
         alive = true,
         direction = {x=0,y=1,z=0},
+        old_direction = {x=0,y=1,z=0},
         nodes = {},
         score = 1,
         color = "",
         apple = false,
+        --textures= {},
       },
   })
 

@@ -233,7 +233,7 @@ arena_lib.on_load("wormball", function(arena)
 
         player:set_attach(att, "", {x=0,y=0,z=0}, {x=0,y=0,z=0})
         player_api.player_attached[pl_name] = true
-        player:set_eye_offset(eye_offset, {x=0, y=0, z=0})
+        --player:set_eye_offset(eye_offset, {x=0, y=0, z=0})
 
 
 
@@ -413,8 +413,9 @@ minetest.register_globalstep(function(dtime)
                                     gain = 2.0,
                                 })        
                             end
-
+                            arena.players[pl_name].alive = false
                             minetest.after(1, function(pl_name) 
+                                
                                 arena_lib.remove_player_from_arena(pl_name, 1)
                             
                             end,pl_name)
@@ -433,12 +434,15 @@ minetest.register_globalstep(function(dtime)
                 if remove_tail == true then
                     local len = #arena.players[pl_name].nodes
                     local tail_pos = arena.players[pl_name].nodes[len]
-                    minetest.set_node(tail_pos, {name="air"})
-                    table.remove(arena.players[pl_name].nodes,len)
+                    if tail_pos then 
+                        minetest.set_node(tail_pos, {name="air"}) 
+                        table.remove(arena.players[pl_name].nodes,len)
+                    end
                 end
 
                 if #arena.players[pl_name].nodes == 0 then
                     minetest.chat_send_player(pl_name, 'Your score is '..arena.players[pl_name].score)
+                    arena.players[pl_name].alive = false
                     minetest.after(1,function(pl_name)  
                         arena_lib.remove_player_from_arena(pl_name, 1)
 

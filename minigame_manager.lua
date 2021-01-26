@@ -1,25 +1,8 @@
-
--- wormball.straight = {pxpx = 1,pzpz=0,pypy=4,
---                     nxnx = 1,nznz=0,nyny=4,
---                     nxpx = 1,nzpz=0,nypy=4,
---                     pxnx = 1,pznz=0,pyny=4, } --format: axis
--- --format: sign,axis to sign,axis
--- wormball.corner = { 
---                   nynx=1,pynx=13,pznx=9,
---                   nypz=2,pypz=10,pzpx=11,
---                   nypx=3,pypx=21,nzpx=7,
---                   nynz=0,pynz= 4,nznx=5,
-
---                   nxny=1,nxpy=13,nxpz=9,
---                   pzny=2,pzpy=10,pxpz=11,
---                   pxny=3,pxpy=21,pxnz=7,
---                   nzny=0,nzpy= 4,nxnz=5,
---                   }
--- --format: dir pitch(h,u,d)for horiz, up or down ; dir facing
--- wormball.head = { 
---                 hpz=0,hpx=1,hnz=2,hnx=3,
---                 dpz=4,dpx=13,dnz=10,dnx=19,
---                 upz=8,upx=17,unz=6,unx=15,}
+--todo: make it only delete wormball nodes in clear area, so unusuall shape arenas are possible.
+--bgm
+--colorize chat messages
+--timer hud
+--highscores
 
 wormball.player_texture_save = {}
 
@@ -105,9 +88,7 @@ function wormball.place_node(nodes,dir,old_dir,look_dir,color) --dir should be:{
                 old_dircode = 'nz'
             end
         end
-     
-        -- minetest.chat_send_all('dir = '..dump(dir))
-        -- minetest.chat_send_all('old_dir = '..dump(old_dir))
+
         if axis == old_axis then 
             type = 'straight'
         else
@@ -161,11 +142,16 @@ end
 
 
 local function send_message(arena,num_str)
-    arena_lib.HUD_send_msg_all("broadcast", arena, "Game Begins In "..num_str, 1)
+    arena_lib.HUD_send_msg_all("title", arena, "Game Begins In "..num_str, 1,nil,0xFF0000)
     --arena_lib.HUD_send_msg_all(HUD_type, arena, msg, <duration>, <sound>, <color>)
 end
 
 arena_lib.on_load("wormball", function(arena)
+    local c = 0
+    for pl_name, stats in pairs(arena.players) do
+        c =c +1
+    end
+    arena.num_players = c
 
     send_message(arena,'5')
     minetest.after(1, function(arena)
@@ -177,9 +163,9 @@ arena_lib.on_load("wormball", function(arena)
                 minetest.after(1, function(arena)
                     send_message(arena,'1')
                     minetest.after(1, function(arena)
-                        arena_lib.HUD_send_msg_all("broadcast", arena, "GO!", 1)
+                        arena_lib.HUD_send_msg_all("title", arena, "GO!", 1,nil,0x00FF00)
                         minetest.after(1, function(arena)
-                            arena_lib.HUD_send_msg_all("hotbar", arena, "Avoid Your Own Color, eat other dots!", 3)
+                            arena_lib.HUD_send_msg_all("hotbar", arena, "Avoid Your Own Color, eat other dots!", 3,nil,0xFFAE00)
         
                         end, arena)
                     end, arena)
@@ -281,6 +267,16 @@ end)
 
 
 arena_lib.on_time_tick('wormball', function(arena)
+    local c = 0x00FF00
+    if arena.current_time < 60 then
+        c = 0xFFFF00
+    end
+    if arena.current_time < 10 then
+        c = 0xFF0000
+    end
+
+
+    arena_lib.HUD_send_msg_all('hotbar', arena, 'T - '..arena.current_time, 1,nil,c)
     local p1 = arena.area_to_clear_after_game_pos_1
     local p2 = arena.area_to_clear_after_game_pos_2
     local x1 = p1.x 
@@ -450,8 +446,8 @@ minetest.register_globalstep(function(dtime)
                             wormball.place_node(arena.players[pl_name].nodes,arena.players[pl_name].direction,old_dir,look_dir,color)
                             arena.players[pl_name].score = arena.players[pl_name].score - 1
                             --minetest.chat_send_player(pl_name,'YUCK! You Lost a point.')
-                            minetest.chat_send_all('bad!')
-                            arena_lib.HUD_send_msg('hotbar', pl_name, 'YUCK! You Lost a point.', 2, 'wormball_yuck')
+                            --minetest.chat_send_all('bad!')
+                            arena_lib.HUD_send_msg('broadcast', pl_name, 'YUCK! You Lost a point.', 2, 'wormball_yuck',0xFF0000)
                             
                             
                             local att = player:get_attach()
@@ -483,7 +479,7 @@ minetest.register_globalstep(function(dtime)
                             wormball.place_node(arena.players[pl_name].nodes,arena.players[pl_name].direction,old_dir,look_dir,color)
                             arena.players[pl_name].score = arena.players[pl_name].score + 1
                             --minetest.chat_send_player(pl_name,'You are now '..arena.players[pl_name].score..' long.')
-                            arena_lib.HUD_send_msg('hotbar', pl_name, 'Yay! You are now '..arena.players[pl_name].score..' long.', 2, 'wormball_powerup')
+                            arena_lib.HUD_send_msg('broadcast', pl_name, 'Yay! You are now '..arena.players[pl_name].score..' long.', 2, 'wormball_powerup',0x00FF11)
                             local att = player:get_attach()
                             if att then
                                 att:move_to(new_pos, true)
@@ -652,3 +648,63 @@ arena_lib.on_disconnect('wormball', function(arena, p_name)
     end
 
 end)
+
+
+
+arena_lib.on_timeout('wormball', function(arena)
+    local winner = {0,''}
+    for pl_name, stats in pairs(arena.players) do
+        if arena.players[pl_name].score > winner[1] then
+            winner[1] = arena.players[pl_name].score
+            winner[2] = pl_name
+        end
+    end
+
+    
+    arena_lib.load_celebration('wormball', arena, winner[2])
+end)
+
+arena_lib.on_celebration('wormball', function(arena, winner_name)
+    for pl_name,stats in pairs(arena.players) do
+        local player = minetest.get_player_by_name(pl_name)
+        if player then
+            player:set_properties({textures = wormball.player_texture_save[pl_name]})
+            local att = player:get_attach()
+            player:set_detach()
+            player_api.player_attached[pl_name] = false
+            if att then att:remove() end
+                  
+        end
+    end
+
+
+    if type(winner_name) == 'string' then
+        local highscore_tbl = {'highscore_1','highscore_2','highscore_3','highscore_4','highscore_5','highscore_6','highscore_7','highscore_8','highscore_9','highscore_10',}
+        
+        local highscore = arena[highscore_tbl[arena.num_players]]
+
+
+        local high_name = highscore[1]
+        local high_num = highscore[2]
+        local winner_pts = arena.players[winner_name].score
+        arena_lib.HUD_send_msg_all("title", arena, winner_name..' won with '..winner_pts.. ' pts!', 9,'sumo_win',0xAEAE00)
+        arena_lib.HUD_send_msg_all("hotbar", arena, 'Highscore: '..high_name.. ' '..high_num, 9,nil,0x0000FF)
+        if high_num < winner_pts then
+            arena['highscore_'..arena.num_players] = {winner_name,winner_points}
+            minetest.after(2,function(arena,winner_name,winner_pts)
+                arena_lib.HUD_send_msg_all("title", arena, 'NEW HIGH SCORE '.. arena.num_players ..' PLAYER!', 7,'sumo_win',0xAEAE00)
+                arena_lib.HUD_send_msg_all("hotbar", arena, 'Highscore: '..high_name.. ' '..high_num, 7,nil,0x0000FF)
+            end,arena,winner_name,winner_pts)
+        end
+            
+
+
+
+        
+    end
+        
+
+
+end)
+
+

@@ -62,13 +62,12 @@ for name,color in pairs(wormball.colors) do
 end
 
 
-minetest.register_node("wormball:straight_", {
+minetest.register_node("wormball:power", {
     description = "wormball node straight",
     drawtype = "mesh",
-    mesh = 'wormball_straight.b3d',
-    tiles = {"wormball_straight.png", "wormball_end.png"},
+    mesh = 'wormball_power.b3d',
+    tiles = {"wormball_power.png^[colorize:#a38800599"},
     paramtype2 = "facedir",
-    place_param2 = 4,
     paramtype = "light",
     backface_culling = true,
     sunlight_propagates = true, -- Sunlight can shine through block
@@ -77,3 +76,28 @@ minetest.register_node("wormball:straight_", {
 })
 
 
+
+
+
+minetest.register_entity('wormball:player_att',{
+    initial_properties = {
+        physical = false,
+        pointable = false,
+        visual = "sprite",
+        textures = {'wormball_alpha.png'},
+        use_texture_alpha = true,
+        is_visible = false,
+    },
+    _timer = 1,
+
+    on_step = function(self, dtime, moveresult)
+        -- self._timer = self._timer + dtime
+        -- if self._timer < 6 and not(self.object:get_attach()) then
+        --     self.object:remove()
+        -- end
+        return
+        
+        
+    end,
+ 
+})

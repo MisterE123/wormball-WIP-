@@ -165,7 +165,7 @@ arena_lib.on_load("wormball", function(arena)
                     minetest.after(1, function(arena)
                         arena_lib.HUD_send_msg_all("title", arena, "GO!", 1,nil,0x00FF00)
                         minetest.after(1, function(arena)
-                            arena_lib.HUD_send_msg_all("hotbar", arena, "Avoid Your Own Color, eat other dots!", 3,nil,0xFFAE00)
+                            arena_lib.HUD_send_msg_all("hotbar", arena, "Avoid Your Own Color, eat other dots!", 5,nil,0xFFAE00)
         
                         end, arena)
                     end, arena)
@@ -275,8 +275,9 @@ arena_lib.on_time_tick('wormball', function(arena)
         c = 0xFF0000
     end
 
-
-    arena_lib.HUD_send_msg_all('hotbar', arena, 'T - '..arena.current_time, 1,nil,c)
+    if arena.current_time < arena.initial_time - 5 then
+        arena_lib.HUD_send_msg_all('hotbar', arena, 'T - '..arena.current_time, 1,nil,c)
+    end
     local p1 = arena.area_to_clear_after_game_pos_1
     local p2 = arena.area_to_clear_after_game_pos_2
     local x1 = p1.x 
@@ -681,7 +682,7 @@ arena_lib.on_celebration('wormball', function(arena, winner_name)
     if type(winner_name) == 'string' then
         local highscore_tbl = {'highscore_1','highscore_2','highscore_3','highscore_4','highscore_5','highscore_6','highscore_7','highscore_8','highscore_9','highscore_10',}
         
-        local highscore = arena[highscore_tbl[arena.num_players]]
+        local highscore = arena.highscores[arena.num_players]
 
 
         local high_name = highscore[1]
@@ -690,10 +691,10 @@ arena_lib.on_celebration('wormball', function(arena, winner_name)
         arena_lib.HUD_send_msg_all("title", arena, winner_name..' won with '..winner_pts.. ' pts!', 9,'sumo_win',0xAEAE00)
         arena_lib.HUD_send_msg_all("hotbar", arena, 'Highscore: '..high_name.. ' '..high_num, 9,nil,0x0000FF)
         if high_num < winner_pts then
-            arena['highscore_'..arena.num_players] = {winner_name,winner_points}
+            arena.highscores[arena.num_players] = {winner_name,winner_pts}
             minetest.after(2,function(arena,winner_name,winner_pts)
                 arena_lib.HUD_send_msg_all("title", arena, 'NEW HIGH SCORE '.. arena.num_players ..' PLAYER!', 7,'sumo_win',0xAEAE00)
-                arena_lib.HUD_send_msg_all("hotbar", arena, 'Highscore: '..high_name.. ' '..high_num, 7,nil,0x0000FF)
+                arena_lib.HUD_send_msg_all("hotbar", arena, 'Highscore: '..winner_name.. ' '..winner_pts, 7,nil,0x0000FF)
             end,arena,winner_name,winner_pts)
         end
             

@@ -160,9 +160,33 @@ function wormball.get_look_dir(arena,player)
 end
 
 
-
+local function send_message(arena,num_str)
+    arena_lib.HUD_send_msg_all("broadcast", arena, "Game Begins In "..num_str, 1, nil, "#255000000")
+end
 
 arena_lib.on_load("wormball", function(arena)
+
+    send_message(arena,'5')
+    minetest.after(1, function(arena)
+        send_message(arena,'4')
+        minetest.after(1, function(arena)
+            send_message(arena,'3')
+            minetest.after(1, function(arena)
+                send_message(arena,'2')
+                minetest.after(1, function(arena)
+                    send_message(arena,'1')
+                    minetest.after(1, function(arena)
+                        arena_lib.HUD_send_msg_all("broadcast", arena, "GO!", 1, nil, "#255000000")
+    
+                    end, arena)
+
+                end, arena)
+                
+            end, arena)
+    
+        end, arena)
+    
+    end, arena)
 
     --clear the board of gamepieces
     local pos1 = arena.area_to_clear_after_game_pos_1
@@ -227,8 +251,8 @@ arena_lib.on_load("wormball", function(arena)
 
         local att = minetest.add_entity(pos, 'wormball:player_att')
 
-        if att then minetest.chat_send_all('ent spawned!')
-        else minetest.chat_send_all('ent not spawned!') end
+        -- if att then minetest.chat_send_all('ent spawned!')
+        -- else minetest.chat_send_all('ent not spawned!') end
 
 
         player:set_attach(att, "", {x=0,y=0,z=0}, {x=0,y=0,z=0})
@@ -372,7 +396,7 @@ minetest.register_globalstep(function(dtime)
                         if att then
                             att:move_to(new_pos, true)
                         else
-                            minetest.chat_send_all('not_attached!')
+                            --minetest.chat_send_all('not_attached!')
                         end
 
                     elseif new_node == 'default:apple' then
@@ -386,7 +410,7 @@ minetest.register_globalstep(function(dtime)
                         if att then
                             att:move_to(new_pos, true)
                         else
-                            minetest.chat_send_all('not_attached!')
+                            --minetest.chat_send_all('not_attached!')
                         end
 
                     else

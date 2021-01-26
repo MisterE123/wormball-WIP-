@@ -55,6 +55,21 @@ for name,color in pairs(wormball.colors) do
         sounds = default.node_sound_glass_defaults()
     })
 
+    
+
+    minetest.register_node("wormball:power_"..name, {
+        description = "wormball power "..name,
+        drawtype = "mesh",
+        mesh = 'wormball_power.b3d',
+        tiles = {"wormball_power.png^[colorize:#"..color},
+        paramtype2 = "facedir",
+        paramtype = "light",
+        backface_culling = true,
+        sunlight_propagates = true, -- Sunlight can shine through block
+        groups = {cracky = 3, oddly_breakable_by_hand = 3},
+        sounds = default.node_sound_glass_defaults()
+    })
+
 
 
 
@@ -66,7 +81,7 @@ minetest.register_node("wormball:power", {
     description = "wormball node straight",
     drawtype = "mesh",
     mesh = 'wormball_power.b3d',
-    tiles = {"wormball_power.png^[colorize:#a38800599"},
+    tiles = {"wormball_power.png^[colorize:#e0bb00bb"},
     paramtype2 = "facedir",
     paramtype = "light",
     backface_culling = true,

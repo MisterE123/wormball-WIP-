@@ -161,7 +161,8 @@ end
 
 
 local function send_message(arena,num_str)
-    arena_lib.HUD_send_msg_all("broadcast", arena, "Game Begins In "..num_str, 1, nil, "#255000000")
+    arena_lib.HUD_send_msg_all("broadcast", arena, "Game Begins In "..num_str, 1)
+    --arena_lib.HUD_send_msg_all(HUD_type, arena, msg, <duration>, <sound>, <color>)
 end
 
 arena_lib.on_load("wormball", function(arena)
@@ -176,8 +177,11 @@ arena_lib.on_load("wormball", function(arena)
                 minetest.after(1, function(arena)
                     send_message(arena,'1')
                     minetest.after(1, function(arena)
-                        arena_lib.HUD_send_msg_all("broadcast", arena, "GO!", 1, nil, "#255000000")
-    
+                        arena_lib.HUD_send_msg_all("broadcast", arena, "GO!", 1)
+                        minetest.after(1, function(arena)
+                            arena_lib.HUD_send_msg_all("hotbar", arena, "Avoid Your Own Color, eat other dots!", 3)
+        
+                        end, arena)
                     end, arena)
 
                 end, arena)
@@ -236,7 +240,7 @@ arena_lib.on_load("wormball", function(arena)
     end
     idx = 1
     for pl_name, stats in pairs(arena.players) do
-        local message = 'Controls: Use look direction to steer, or press up or down.  Dont bump anything! Eat apples to grow and get points!'
+        local message = 'Controls: Use look direction to steer, or press jump or sneak to move.  Dont bump anything! Eat dots to grow and get points, but your own color will shrink you!'
         minetest.chat_send_player(pl_name,message)
         local player = minetest.get_player_by_name(pl_name)
         player:set_velocity({x=0,y=0,z=0})
@@ -300,16 +304,44 @@ arena_lib.on_time_tick('wormball', function(arena)
         z2 = z1
         z1 = temp
     end
+    local color_table = {}
+    local i=1
+    for color,code in pairs(wormball.colors) do
+        color_table[i] = color
+        i=i+1
+    end
+
+    local num_players = 0
+    for pl_name,stats in pairs(arena.players) do
+        num_players = num_players +1
+    end
+
+    local remove = false
+    if #arena.dots and #arena.dots>num_players +5 then
+        remove = true
+    end
 
     for pl_name,stats in pairs(arena.players) do
         local rand_pos = {x = math.random(x1,x2),y = math.random(y1,y2), z=math.random(z1,z2)}
         local item = 'none'
         if math.random(1,3)== 1 then
-            item = 'default:apple'
+            local color = color_table[math.random(1,#color_table)]
+            item = "wormball:power_"..color
         end
+
         --put other  powerups here, with lower chances
         if item ~= 'none' then
-            minetest.set_node(rand_pos, {name=item})
+            if minetest.get_node(rand_pos).name == 'air' then
+                minetest.set_node(rand_pos, {name=item})
+                table.insert(arena.dots,rand_pos)
+            end
+        end
+        if remove then
+            if math.random(1,2) == 1 then
+                rem_pos = table.remove(arena.dots,math.random(4,#arena.dots))
+                minetest.set_node(rem_pos, {name="air"})
+
+            end
         end
     end
 
@@ -387,33 +419,83 @@ minetest.register_globalstep(function(dtime)
                     local new_node = minetest.get_node(new_pos).name
 
                     if new_node == 'air' then
-                        table.insert(arena.players[pl_name].nodes,1,new_pos)
-                        --minetest.set_node(new_pos, {name="wormball:node_"..color})
-                        wormball.place_node(arena.players[pl_name].nodes,arena.players[pl_name].direction,old_dir,look_dir,color)
+                        if arena.players[pl_name].move == true then
+                            table.insert(arena.players[pl_name].nodes,1,new_pos)
+                            --minetest.set_node(new_pos, {name="wormball:node_"..color})
+                            wormball.place_node(arena.players[pl_name].nodes,arena.players[pl_name].direction,old_dir,look_dir,color)
 
-                        --player:move_to(new_pos, true)
-                        local att = player:get_attach()
-                        if att then
-                            att:move_to(new_pos, true)
+                            --player:move_to(new_pos, true)
+                            local att = player:get_attach()
+                            if att then
+                                att:move_to(new_pos, true)
+                            else
+                                --minetest.chat_send_all('not_attached!')
+                            end
                         else
-                            --minetest.chat_send_all('not_attached!')
+                            arena.players[pl_name].move = true
                         end
 
-                    elseif new_node == 'default:apple' then
-                        remove_tail = false
-                        table.insert(arena.players[pl_name].nodes,1,new_pos)
-                        --minetest.set_node(new_pos, {name="wormball:node_"..color})
-                        wormball.place_node(arena.players[pl_name].nodes,arena.players[pl_name].direction,old_dir,look_dir,color)
-                        arena.players[pl_name].score = arena.players[pl_name].score + 1
-                        minetest.chat_send_player(pl_name,'You are now '..arena.players[pl_name].score..' long.')
-                        local att = player:get_attach()
-                        if att then
-                            att:move_to(new_pos, true)
+                    elseif new_node == "wormball:power_"..color then --oops, hit own color, remove 1 length
+                        for _,dot in pairs(arena.dots) do
+                            if dot == new_pos then
+                                table.remove(arena.dots,_)
+                            end
+                        end
+                        
+
+
+                        if arena.players[pl_name].move == true then
+                            table.insert(arena.players[pl_name].nodes,1,new_pos)
+                            --minetest.set_node(new_pos, {name="wormball:node_"..color})
+                            wormball.place_node(arena.players[pl_name].nodes,arena.players[pl_name].direction,old_dir,look_dir,color)
+                            arena.players[pl_name].score = arena.players[pl_name].score - 1
+                            --minetest.chat_send_player(pl_name,'YUCK! You Lost a point.')
+                            minetest.chat_send_all('bad!')
+                            arena_lib.HUD_send_msg('hotbar', pl_name, 'YUCK! You Lost a point.', 2, 'wormball_yuck')
+                            
+                            
+                            local att = player:get_attach()
+                            if att then
+                                att:move_to(new_pos, true)
+                            else
+                                --minetest.chat_send_all('not_attached!')
+                            end
                         else
-                            --minetest.chat_send_all('not_attached!')
+                            arena.players[pl_name].move = true
                         end
 
-                    else
+                        
+                        remove_tail = true
+                        arena.players[pl_name].move = false
+
+                    elseif string.find(new_node,'wormball:power_') then --we found a powerup!
+
+                        for _,dot_pos in pairs(arena.dots) do
+                            if dot_pos == new_pos then
+                                table.remove(arena.dots,_)
+                            end
+                        end
+
+                        if arena.players[pl_name].move == true then
+                            remove_tail = false
+                            table.insert(arena.players[pl_name].nodes,1,new_pos)
+                            --minetest.set_node(new_pos, {name="wormball:node_"..color})
+                            wormball.place_node(arena.players[pl_name].nodes,arena.players[pl_name].direction,old_dir,look_dir,color)
+                            arena.players[pl_name].score = arena.players[pl_name].score + 1
+                            --minetest.chat_send_player(pl_name,'You are now '..arena.players[pl_name].score..' long.')
+                            arena_lib.HUD_send_msg('hotbar', pl_name, 'Yay! You are now '..arena.players[pl_name].score..' long.', 2, 'wormball_powerup')
+                            local att = player:get_attach()
+                            if att then
+                                att:move_to(new_pos, true)
+                            else
+                                --minetest.chat_send_all('not_attached!')
+                            end
+                        else
+                            arena.players[pl_name].move = true
+                        end
+
+
+                    else --we have run into something
                         arena.players[pl_name].alive = false
                         minetest.sound_play('sumo_lose', {
                             to_player = pl_name,

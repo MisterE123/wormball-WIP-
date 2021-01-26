@@ -43,6 +43,7 @@ wormball.colors = {yellow = "fcba0388",
       },
       temp_properties = {
         mode = 'singleplayer',
+        dots = {},
       },
 
       player_properties = {
@@ -54,6 +55,7 @@ wormball.colors = {yellow = "fcba0388",
         color = "",
         apple = false,
         --textures= {},
+        move = true,
       },
   })
 

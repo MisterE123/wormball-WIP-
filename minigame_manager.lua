@@ -1,8 +1,9 @@
---todo: make it only delete wormball nodes in clear area, so unusuall shape arenas are possible.
---bgm
---colorize chat messages
---timer hud
---highscores
+--todo: 
+--make it only delete wormball nodes in clear area, so unusual shape arenas are possible. --done
+--bgm --available (..wormball/sounds/wormball_bgm)
+--colorize chat messages --kinda done
+--timer hud --done
+--highscores --kinda done, needs rework
 
 wormball.player_texture_save = {}
 

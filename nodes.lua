@@ -21,7 +21,7 @@ for name,color in pairs(wormball.colors) do
         pointable = false,
         backface_culling = true,
         sunlight_propagates = true, -- Sunlight can shine through block
-        groups = {cracky = 3,},
+        groups = {not_in_creative_inventory = 1,},
         sounds = default.node_sound_glass_defaults()
     })
         
@@ -36,7 +36,7 @@ for name,color in pairs(wormball.colors) do
         paramtype = "light",
         backface_culling = true,
         sunlight_propagates = true, -- Sunlight can shine through block
-        groups = {cracky = 3,},
+        groups = {not_in_creative_inventory = 1,},
         sounds = default.node_sound_glass_defaults()
     })
 
@@ -51,7 +51,7 @@ for name,color in pairs(wormball.colors) do
         paramtype = "light",
         backface_culling = true,
         sunlight_propagates = true, -- Sunlight can shine through block
-        groups = {cracky = 3,},
+        groups = {not_in_creative_inventory = 1,},
         sounds = default.node_sound_glass_defaults()
     })
 
@@ -64,9 +64,10 @@ for name,color in pairs(wormball.colors) do
         tiles = {"wormball_power.png^[colorize:#"..color},
         paramtype2 = "facedir",
         paramtype = "light",
+        pointable = false,
         backface_culling = true,
         sunlight_propagates = true, -- Sunlight can shine through block
-        groups = {cracky = 3, oddly_breakable_by_hand = 3},
+        groups = {not_in_creative_inventory = 1,},
         sounds = default.node_sound_glass_defaults()
     })
 
@@ -77,18 +78,96 @@ for name,color in pairs(wormball.colors) do
 end
 
 
-minetest.register_node("wormball:power", {
-    description = "wormball node straight",
-    drawtype = "mesh",
-    mesh = 'wormball_power.b3d',
-    tiles = {"wormball_power.png^[colorize:#e0bb00bb"},
-    paramtype2 = "facedir",
-    paramtype = "light",
-    backface_culling = true,
-    sunlight_propagates = true, -- Sunlight can shine through block
-    groups = {cracky = 3, oddly_breakable_by_hand = 3},
-    sounds = default.node_sound_glass_defaults()
-})
+
+
+
+
+
+for name,color in pairs(wormball.colors) do
+
+    minetest.register_node("wormball:creative_straight_"..name, {
+        description = "wormball creative node straight "..name,
+        drawtype = "mesh",
+        mesh = 'wormball_straight.b3d',
+        tiles = {"wormball_straight.png^[colorize:#"..color, "wormball_end.png^[colorize:#"..color},
+        paramtype2 = "facedir",
+        paramtype = "light",
+        pointable = false,
+        backface_culling = true,
+        sunlight_propagates = true, -- Sunlight can shine through block
+        groups = {not_in_creative_inventory = 1,},
+        sounds = default.node_sound_glass_defaults()
+    })
+        
+    minetest.register_node("wormball:creative_corner_"..name, {
+        description = "wormball creative node corner "..name,
+        drawtype = "mesh",
+        mesh = 'wormball_corner.b3d',
+        tiles = {"wormball_straight.png^[colorize:#"..color, "wormball_end.png^[colorize:#"..color,"wormball_corner_side.png^[colorize:#"..color,"wormball_corner_top.png^[colorize:#"..color},
+        paramtype2 = "facedir", 
+        pointable = false,
+        paramtype = "light",
+        backface_culling = true,
+        sunlight_propagates = true, -- Sunlight can shine through block
+        groups = {not_in_creative_inventory = 1,},
+        sounds = default.node_sound_glass_defaults()
+    })
+
+    minetest.register_node("wormball:creative_head_"..name, {
+        description = "wormball creative head "..name,
+        drawtype = "mesh",
+        mesh = 'wormball_head.b3d',
+        tiles = {"wormball_head.png^[colorize:#"..color,"wormball_eye.png"},
+        paramtype2 = "facedir", 
+        pointable = false,
+        paramtype = "light",
+        backface_culling = true,
+        sunlight_propagates = true, -- Sunlight can shine through block
+        groups = {not_in_creative_inventory = 1,},
+        sounds = default.node_sound_glass_defaults()
+    })
+
+    
+
+    minetest.register_node("wormball:creative_power_"..name, {
+        description = "wormball creative power "..name,
+        drawtype = "mesh",
+        mesh = 'wormball_power.b3d',
+        tiles = {"wormball_power.png^[colorize:#"..color},
+        paramtype2 = "facedir",
+        paramtype = "light",
+        pointable = false,
+        backface_culling = true,
+        sunlight_propagates = true, -- Sunlight can shine through block
+        groups = {not_in_creative_inventory = 1,},
+        sounds = default.node_sound_glass_defaults()
+    })
+
+
+
+
+
+end
+
+
+
+
+
+
+
+
+-- minetest.register_node("wormball:power", {
+--     description = "wormball node straight",
+--     drawtype = "mesh",
+--     mesh = 'wormball_power.b3d',
+--     tiles = {"wormball_power.png^[colorize:#e0bb00bb"},
+--     paramtype2 = "facedir",
+--     paramtype = "light",
+--     backface_culling = true,
+--     sunlight_propagates = true, -- Sunlight can shine through block
+--     groups = {cracky = 3, oddly_breakable_by_hand = 3},
+--     sounds = default.node_sound_glass_defaults()
+-- })
 
 
 
@@ -116,3 +195,7 @@ minetest.register_entity('wormball:player_att',{
     end,
  
 })
+
+
+
+

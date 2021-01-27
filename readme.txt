@@ -1,7 +1,7 @@
 Wormball mod by MisterE for use with arena_lib (minigame_lib) You should be familiar with how to set up arena_lib arenas.
 
 Code snippets from https://gitlab.com/zughy-friends-minetest/arena_lib/-/blob/master/DOCS.md and from Zughy's minigames
-
+all assets cc0. Models by MisterE, textures by MisterE, and sounds CC0 from opengameart
 
 to set up an arena, create a completely enclosed arena out of any nodes you wish except those provided by this mod. 
 You should place lights in the walls, or have glass to allow light in. In this version, you can have any shape arena you like. 
@@ -37,6 +37,9 @@ end
 9) exit the editor mode
 10) type /minigamesettings wormball
 11) change the hub spawnpoint to be next to the signs.
+
+
+background music is available: it is in the sounds folder, and titled: wormball_bgm
 
 
 

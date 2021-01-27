@@ -1,7 +1,7 @@
 
 # Wormball
 
-Eat apples to grow, be the last and the longest!
+Eat colorpoints to grow, be the last and the longest! Beat the Highscore!
 
 ![](screenshot.png)
 

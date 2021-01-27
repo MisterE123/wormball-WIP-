@@ -206,9 +206,12 @@ arena_lib.on_load("wormball", function(arena)
     for x = x1,x2 do
         for y = y1,y2 do
             for z = z1,z2 do
-                --local node = minetest.get_node({x=x,y=y,z=z}).name
+                local nodename = minetest.get_node({x=x,y=y,z=z}).name 
+                if string.find(nodename,'wormball') then
+
                 
-                minetest.set_node({x=x,y=y,z=z}, {name="air"})
+                    minetest.set_node({x=x,y=y,z=z}, {name="air"})
+                end
                 
             end
         end
@@ -314,7 +317,7 @@ arena_lib.on_time_tick('wormball', function(arena)
     end
 
     local remove = false
-    if #arena.dots and #arena.dots>num_players +5 then
+    if #arena.dots and #arena.dots> arena.min_food_factor * num_players + arena.min_food then
         remove = true
     end
 
@@ -374,10 +377,11 @@ minetest.register_globalstep(function(dtime)
                 
                 local stats = arena.players[pl_name]
                 local remove_tail = true
+                local color = stats.color
                 if stats.alive == true then
                     local old_dir = arena.players[pl_name].old_direction or {x=0,y=1,z=0} --grab the old_dir info before its updated
                     local player = minetest.get_player_by_name(pl_name)
-                    local color = stats.color
+                    -- local color = stats.color
                     local look_dir = ''
                     --+x is forward, +z is left
                     local control = player:get_player_control() --{jump=bool, right=bool, left=bool, LMB=bool, RMB=bool, sneak=bool, aux1=bool, down=bool, up=bool}
@@ -539,7 +543,12 @@ minetest.register_globalstep(function(dtime)
                     local len = #arena.players[pl_name].nodes
                     local tail_pos = arena.players[pl_name].nodes[len]
                     if tail_pos then 
-                        minetest.set_node(tail_pos, {name="air"}) 
+                        if arena.players[pl_name].alive == false then
+                            item = "wormball:power_"..color
+                            minetest.set_node(tail_pos, {name=item}) 
+                        else
+                            minetest.set_node(tail_pos, {name="air"}) 
+                        end
                         table.remove(arena.players[pl_name].nodes,len)
                     end
                 end

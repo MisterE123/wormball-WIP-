@@ -40,6 +40,8 @@ wormball.colors = {yellow = "fcba0388",
       properties = {
         area_to_clear_after_game_pos_1 = {x = 0, y = 0, z = 0},
         area_to_clear_after_game_pos_2 = {x = 0, y = 0, z = 0},
+        min_food_factor = 2,
+        min_food = 20,
         highscores = {
           {'pl_name_placeholder',0},
           {'pl_name_placeholder',0},

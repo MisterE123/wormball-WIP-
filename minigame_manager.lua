@@ -148,6 +148,7 @@ local function send_message(arena,num_str)
 end
 
 arena_lib.on_load("wormball", function(arena)
+
     local c = 0
     for pl_name, stats in pairs(arena.players) do
         c =c +1
@@ -271,6 +272,7 @@ end)
 
 
 arena_lib.on_time_tick('wormball', function(arena)
+    
     local c = 0x00FF00
     if arena.current_time < 60 then
         c = 0xFFFF00
@@ -323,6 +325,24 @@ arena_lib.on_time_tick('wormball', function(arena)
     end
 
     for pl_name,stats in pairs(arena.players) do
+<<<<<<< Updated upstream
+=======
+
+        --testing
+        local test_pl = minetest.get_player_by_name(pl_name)
+        local test_state = ""
+        if test_pl:get_attach() == nil then
+            test_state = 'not attached'
+        else
+            test_state = 'attached'
+        end
+        --minetest.chat_send_all("time: "..arena.current_time.." player "..pl_name.. ' is '..test_state)
+        
+
+
+
+
+>>>>>>> Stashed changes
         local rand_pos = {x = math.random(x1,x2),y = math.random(y1,y2), z=math.random(z1,z2)}
         local item = 'none'
         if math.random(1,3)== 1 then
@@ -362,6 +382,26 @@ wormball.timer = 0
 
 minetest.register_globalstep(function(dtime)
     --if wormball.timer then wormball.timer = 0 end
+    for _,player in ipairs(minetest.get_connected_players()) do
+        local pl_name = player:get_player_name()
+
+        if arena_lib.is_player_in_arena(pl_name, "wormball") then
+            local arena = arena_lib.get_arena_by_player(pl_name)
+            if not(arena.in_queue == true) and not (arena.in_loading == true) and not(arena.in_celebration == true) and arena.enabled == true then 
+                local stats = arena.players[pl_name]
+                if stats.alive == true then
+                    if not player:get_attach() then
+                        local pos_head = arena.players[pl_name].nodes[1]
+                        local att = minetest.add_entity(pos_head, 'wormball:player_att')
+
+                        player:set_attach(att, "", {x=0,y=0,z=0}, {x=0,y=0,z=0})
+                    end
+                end
+            end
+        end
+    end
+
+
 
     wormball.timer = wormball.timer+dtime
     if wormball.timer < .4 then return
@@ -380,6 +420,13 @@ minetest.register_globalstep(function(dtime)
                 local remove_tail = true
                 local color = stats.color
                 if stats.alive == true then
+                    -- if not player:get_attach() then
+                    --     local pos_head = arena.players[pl_name].nodes[1]
+                    --     local att = minetest.add_entity(pos_head, 'wormball:player_att')
+
+                    --     player:set_attach(att, "", {x=0,y=0,z=0}, {x=0,y=0,z=0})
+                    -- end
+
                     local old_dir = arena.players[pl_name].old_direction or {x=0,y=1,z=0} --grab the old_dir info before its updated
                     local player = minetest.get_player_by_name(pl_name)
                     -- local color = stats.color
@@ -514,6 +561,10 @@ minetest.register_globalstep(function(dtime)
                             if player then
                                 player:set_properties({textures = wormball.player_texture_save[pl_name]})
                                 local att = player:get_attach()
+<<<<<<< Updated upstream
+=======
+                                --minetest.chat_send_all('ln517')
+>>>>>>> Stashed changes
                                 player:set_detach()
                                 player_api.player_attached[pl_name] = false
                                 if att then att:remove() end
@@ -561,6 +612,12 @@ minetest.register_globalstep(function(dtime)
                     if player then
                         player:set_properties({textures = wormball.player_texture_save[pl_name]})
                         local att = player:get_attach()
+<<<<<<< Updated upstream
+=======
+
+                        --minetest.chat_send_all('ln566')
+
+>>>>>>> Stashed changes
                         player:set_detach()
                         player_api.player_attached[pl_name] = false
                         if att then att:remove() end
@@ -619,6 +676,12 @@ arena_lib.on_eliminate('wormball', function(arena, p_name)
                 arena_lib.load_celebration('wormball', arena, win_player)
             end,arena,win_player)
             local att = win_player_obj:get_attach()
+<<<<<<< Updated upstream
+=======
+
+            --minetest.chat_send_all('ln627')
+
+>>>>>>> Stashed changes
             win_player_obj:set_detach()
             player_api.player_attached[win_player] = false
             if att then att:remove() end
@@ -653,7 +716,13 @@ arena_lib.on_disconnect('wormball', function(arena, p_name)
     if player then
         player:set_properties({textures = wormball.player_texture_save[p_name]})
         local att = player:get_attach()
+<<<<<<< Updated upstream
         player_api.player_attached[p_name] = false
+=======
+        --player_api.player_attached[p_name] = false
+        --minetest.chat_send_all('ln664')
+
+>>>>>>> Stashed changes
         player:set_detach()
         if att then att:remove() end
     end
@@ -681,6 +750,11 @@ arena_lib.on_celebration('wormball', function(arena, winner_name)
         if player then
             player:set_properties({textures = wormball.player_texture_save[pl_name]})
             local att = player:get_attach()
+<<<<<<< Updated upstream
+=======
+            --minetest.chat_send_all('ln693')
+
+>>>>>>> Stashed changes
             player:set_detach()
             player_api.player_attached[pl_name] = false
             if att then att:remove() end

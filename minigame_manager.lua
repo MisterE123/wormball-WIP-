@@ -325,24 +325,6 @@ arena_lib.on_time_tick('wormball', function(arena)
     end
 
     for pl_name,stats in pairs(arena.players) do
-<<<<<<< Updated upstream
-=======
-
-        --testing
-        local test_pl = minetest.get_player_by_name(pl_name)
-        local test_state = ""
-        if test_pl:get_attach() == nil then
-            test_state = 'not attached'
-        else
-            test_state = 'attached'
-        end
-        --minetest.chat_send_all("time: "..arena.current_time.." player "..pl_name.. ' is '..test_state)
-        
-
-
-
-
->>>>>>> Stashed changes
         local rand_pos = {x = math.random(x1,x2),y = math.random(y1,y2), z=math.random(z1,z2)}
         local item = 'none'
         if math.random(1,3)== 1 then

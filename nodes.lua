@@ -193,6 +193,18 @@ minetest.register_entity('wormball:player_att',{
         
         
     end,
+    on_attach_child = function(self, child)
+        if child:is_player() then
+            minetest.chat_send_all(child:get_player_name()..' was attached')
+        end
+
+    end,
+    on_detach_child = function(self, child)
+        if child:is_player() then
+            minetest.chat_send_all(child:get_player_name()..' was detached')
+        end
+
+    end,
  
 })
 

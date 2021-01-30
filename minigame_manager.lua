@@ -732,11 +732,12 @@ arena_lib.on_celebration('wormball', function(arena, winner_name)
     if type(winner_name) == 'string' then
         local highscore_tbl = {'highscore_1','highscore_2','highscore_3','highscore_4','highscore_5','highscore_6','highscore_7','highscore_8','highscore_9','highscore_10',}
         
+        
         local highscore = arena.highscores[arena.num_players]
 
 
-        local high_name = highscore[1]
-        local high_num = highscore[2]
+        local high_name = highscore[1] or ''
+        local high_num = highscore[2] or 0
         local winner_pts = arena.players[winner_name].score
         arena_lib.HUD_send_msg_all("title", arena, winner_name..' won with '..winner_pts.. ' pts!', 9,'sumo_win',0xAEAE00)
         arena_lib.HUD_send_msg_all("hotbar", arena, 'Highscore: '..high_name.. ' '..high_num, 9,nil,0x0000FF)

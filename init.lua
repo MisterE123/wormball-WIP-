@@ -70,9 +70,10 @@ if not minetest.get_modpath("lib_chatcmdbuilder") then
 end
 
 dofile(minetest.get_modpath("wormball") .. "/commands.lua")
+--nodes includes the attachment entity, also there are creative decorative worm body parts for decorating minigame hubs
 dofile(minetest.get_modpath("wormball") .. "/nodes.lua")
 dofile(minetest.get_modpath("wormball") .. "/privs.lua")
-
+--minigame_manager simply runs all the files in the folder minigame_manager
 dofile(minetest.get_modpath("wormball") .. "/minigame_manager.lua")
 
 

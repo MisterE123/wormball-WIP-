@@ -42,6 +42,7 @@ end, {
     - create <arena name> [min players] [max players]
     - edit <arena name>
     - enable <arena name>
+    - list -- show created arenas
 
     Other commands:
     - remove <arena name>

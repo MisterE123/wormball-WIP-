@@ -1,18 +1,5 @@
 wormball = {}
---lookup tables
-wormball.colors = {yellow = "fcba0388", 
-                  orangered = "fc280388", 
-                  darkred = "a1000088", 
-                  lightgreen = "80ff0088", 
-                  aqua = "00ff8488",
-                  lightblue = "0084ff88",
-                  darkblue = "0d00ff88",
-                  purple = "8000ff88",
-                  lightpurple = "ee00ff88",
-                  pink = "ff006f88"}
-
-
-
+dofile(minetest.get_modpath("wormball") .. "/globals.lua")
 
   arena_lib.register_minigame("wormball", {
       prefix = "[Wormball] ",
@@ -25,8 +12,8 @@ wormball.colors = {yellow = "fcba0388",
       join_while_in_progress = false,
       keep_inventory = false,
       in_game_physics = {
-        speed = 2,
-        jump = 3,
+        speed = 0,
+        jump = 0,
         sneak = false,
         gravity = 1,
     	},
@@ -73,6 +60,7 @@ wormball.colors = {yellow = "fcba0388",
         apple = false,
         --textures= {},
         move = true,
+        attached = false,
       },
   })
 
@@ -82,7 +70,9 @@ if not minetest.get_modpath("lib_chatcmdbuilder") then
 end
 
 dofile(minetest.get_modpath("wormball") .. "/commands.lua")
-dofile(minetest.get_modpath("wormball") .. "/minigame_manager.lua")
 dofile(minetest.get_modpath("wormball") .. "/nodes.lua")
 dofile(minetest.get_modpath("wormball") .. "/privs.lua")
+
+dofile(minetest.get_modpath("wormball") .. "/minigame_manager.lua")
+
 

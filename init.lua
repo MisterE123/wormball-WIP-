@@ -9,6 +9,7 @@ dofile(minetest.get_modpath("wormball") .. "/globals.lua")
       load_time = 5,
       min_players = 1,
       max_players = 10,
+
       join_while_in_progress = false,
       keep_inventory = false,
       in_game_physics = {
@@ -17,7 +18,7 @@ dofile(minetest.get_modpath("wormball") .. "/globals.lua")
         sneak = false,
         gravity = 1,
     	},
-      show_nametags = true,
+      show_nametags = false,
       hotbar = {
         slots = 0,
         

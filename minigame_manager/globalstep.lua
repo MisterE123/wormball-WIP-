@@ -266,17 +266,10 @@ minetest.register_globalstep(function(dtime)
                             gain = 2.0,
                         })
 
-                        -- --count how many players are left in the arena...
-                        -- local n = 0
-                        -- for name, stat in pairs(arena.players) do
-                        --     n = n+1
-                        -- end
 
-                        -- if we are the only player in the arena, then load celebration... you lost, but you also won,
-                        -- whether as a singleplayer of as a leader in multiplayer
-                        -- although, really, this code will only ever run in singleplayer, since arena_lib automatically ends multiplayer arenas that have 1 player left
-
-                        if arena.mode == 'singleplayer' then--if n == 1 then     
+                        -- if we are in singleplayer, then load celebration... you lost, but you also won,
+                        
+                        if arena.mode == 'singleplayer' then
                             
                                     
                             arena_lib.load_celebration('wormball', arena, pl_name)

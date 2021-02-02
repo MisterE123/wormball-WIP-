@@ -20,7 +20,7 @@ dofile(minetest.get_modpath("wormball") .. "/globals.lua")
     	},
       show_nametags = false,
       hotbar = {
-        slots = 0,
+        slots = 1,
         
       },
       celebration_time =10,

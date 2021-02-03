@@ -13,8 +13,8 @@ dofile(minetest.get_modpath("wormball") .. "/globals.lua")
       join_while_in_progress = false,
       keep_inventory = false,
       in_game_physics = {
-        speed = 0,
-        jump = 0,
+        speed = 1,
+        jump = 1,
         sneak = false,
         gravity = 1,
     	},

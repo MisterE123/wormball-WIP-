@@ -1,3 +1,5 @@
+wormball.version = "02.03.2021.2"
+
 
 wormball.player_texture_save = {}
 

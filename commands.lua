@@ -1,3 +1,17 @@
+--thx AliasAlreadyTaken for this version cmd
+minetest.register_chatcommand("wormball_version", {
+    description = "Shows wormball version",
+    privs = {
+        interact = true,
+    },
+    func = function(name, param)
+        return true, "Wormball Version: "..wormball.version
+      
+    end
+  })
+
+
+
 ChatCmdBuilder.new("wormball", function(cmd)
 
   -- create arena

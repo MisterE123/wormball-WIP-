@@ -67,6 +67,7 @@ minetest.register_globalstep(function(dtime)
                 local remove_tail = true
 
 
+
                 -- if players are alive, move the worms (add to the length, subtract from the tail)
 
                 if stats.alive == true then                    
@@ -79,7 +80,8 @@ minetest.register_globalstep(function(dtime)
                     local control = player:get_player_control() --ref: {jump=bool, right=bool, left=bool, LMB=bool, RMB=bool, sneak=bool, aux1=bool, down=bool, up=bool}
 
                     local look_dir = wormball.get_look_dir(arena,player) --in globals file; returns a string, one of: px, nx, pz, nz for the approximation of player look direction
-
+                    
+                    local died = false --used to determine whether to elim player
 
                     --get player direction from current input, first check up or down, then look direction
 
@@ -252,30 +254,22 @@ minetest.register_globalstep(function(dtime)
                         end
 
 
-                    else --we have run into an arena obstacle, another snake, or ourselves
-
-                        -- the player will no longer be alive. For the next few rounds, we may still be in-game, 
-                        -- as messages are displayed and our worm is converted back into food, but regular player 
-                        -- functions that rely on being alive will not run
-
-                        arena.players[pl_name].alive = false --being dead, the player will lose a length every round until 0, and then they are eliminated. THey wont lose recorded pts tho
-
-                        --play a losing sound
-                        minetest.sound_play('sumo_lose', {
-                            to_player = pl_name,
-                            gain = 2.0,
-                        })
+                    else --we have run into an arena obstacle, another snake, or ourselves set died to true so the player will be removed and their peices converted
 
 
-                        -- if we are in singleplayer, then load celebration... you lost, but you also won,
-                        
-                        if arena.mode == 'singleplayer' then
+
+                        if not arena.in_celebration then
+
                             
-                                    
-                            arena_lib.load_celebration('wormball', arena, pl_name)
-                            return
+                            arena.players[pl_name].alive = false 
+                            
+                            died = true
+
+
                         end
 
+
+                        
                     end
 
                 end
@@ -306,17 +300,23 @@ minetest.register_globalstep(function(dtime)
                     end
                 end
 
-                -- if players have no nodes, eliminate them. (this can happen if they eat a 'bad' dot while only 1 long), and it always happens when
-                -- players crash, after all their nodes are converted into dots. This means that if 2 players crash soon between each other, but 1 has a 
-                -- longer worm, that player will be eliminated after the player with the shorter worm.
+                -- if players have no nodes, eliminate them. (this can happen if they eat a 'bad' dot while only 1 long) if they have run into an obstacle, elim also
+                if #arena.players[pl_name].nodes == 0 or died == true then   --if you eat a bad powerup with only 1 point, then you lose!
+                    
+                    minetest.chat_send_player(pl_name, 'Game Over! Your score is '..arena.players[pl_name].score)
+                    minetest.chat_send_player(pl_name, "You did not make the highscore list because you did not survive for the full game! Try again!")
 
-                if #arena.players[pl_name].nodes == 0 then
+                    for _,node_pos in pairs(arena.players[pl_name].nodes) do 
+                        local item = "wormball:power_"..color
+                        minetest.set_node(node_pos, {name=item})
+                    end
+                    arena.players[pl_name].alive = false
                     
-                    minetest.chat_send_player(pl_name, 'Your score is '..arena.players[pl_name].score)
-                    
-                    arena.players[pl_name].alive = false --just to make sure 
-                    
-                    wormball.detach(pl_name)                                         
+                    wormball.detach(pl_name)         
+                    minetest.sound_play('sumo_lose', {
+                        to_player = pl_name,
+                        gain = 2.0,
+                    })                                 
                     arena_lib.remove_player_from_arena(pl_name, 1)
                 end
             end

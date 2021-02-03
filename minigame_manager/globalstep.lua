@@ -318,8 +318,12 @@ minetest.register_globalstep(function(dtime)
                     minetest.sound_play('sumo_lose', {
                         to_player = pl_name,
                         gain = 2.0,
-                    })                                 
-                    arena_lib.remove_player_from_arena(pl_name, 1)
+                    })
+                    minetest.after(.3,function(pl_name)
+                        arena_lib.remove_player_from_arena(pl_name, 1)
+                    
+                    end,pl_name)                                 
+                    
                 end
             end
         end

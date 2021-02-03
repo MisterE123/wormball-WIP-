@@ -290,7 +290,7 @@ minetest.register_globalstep(function(dtime)
                         -- if the player is dead, then we will slowly convert them into food (of their color)
                         -- if they are still alive, then we will place air there to delete the tail
                         if arena.players[pl_name].alive == false then 
-                            item = "wormball:power_"..color
+                            local item = "wormball:power_"..color
                             minetest.set_node(tail_pos, {name=item}) 
                         else
                             minetest.set_node(tail_pos, {name="air"}) 

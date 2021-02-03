@@ -95,7 +95,7 @@ arena_lib.on_time_tick('wormball', function(arena)
         if remove then
             --if there are enough powerups to remove some, have a 0.5 chance of removing them
             if math.random(1,2) == 1 then
-                rem_pos = table.remove(arena.dots,math.random(4,#arena.dots)) --forget the pos of removed powerup
+                local rem_pos = table.remove(arena.dots,math.random(4,#arena.dots)) --forget the pos of removed powerup
                 if not(string.find(minetest.get_node(rem_pos).name,"wormball:straight_")) 
                 and not(string.find(minetest.get_node(rem_pos).name,"wormball:corner_"))
                 and not(string.find(minetest.get_node(rem_pos).name,"wormball:head_")) then

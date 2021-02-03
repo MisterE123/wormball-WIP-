@@ -66,6 +66,8 @@ minetest.register_globalstep(function(dtime)
 
                 local remove_tail = true
 
+                local died --used to determine whether to elim player
+
 
 
                 -- if players are alive, move the worms (add to the length, subtract from the tail)
@@ -81,7 +83,7 @@ minetest.register_globalstep(function(dtime)
 
                     local look_dir = wormball.get_look_dir(arena,player) --in globals file; returns a string, one of: px, nx, pz, nz for the approximation of player look direction
                     
-                    local died = false --used to determine whether to elim player
+                    died = false --used to determine whether to elim player
 
                     --get player direction from current input, first check up or down, then look direction
 
